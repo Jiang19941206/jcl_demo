@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>static首页</title>
+</head>
+<body>
+    <div>
+        <iframe id="iframe" name="iframe" style="display:none;"></iframe>
+        <form target="iframe" id="fileForm" method="post" action="/file/upload" enctype="multipart/form-data">
+            <input type="file" name="fileName" id="fileI">
+        </form>
+        <button onclick="submitD()">提交</button>
+    </div>
+</body>
+</html>
+<script type="application/javascript" src="/js/jquery-1.8.2.js"></script>
+<script type="application/javascript">
+    var  stopImg = "";
+    function submitD() {
+        $('#fileForm').submit();
+
+        stopImg = setInterval(progress,1000);
+    }
+
+    function progress() {
+        $.ajax({
+            type: "POST",
+            url: "/file/progress",
+            data: "",
+            success:function (data) {
+                console.info(data)
+                if(data == '1'){
+                    clearInterval(stopImg);
+                }
+            }
+        })
+    }
+</script>

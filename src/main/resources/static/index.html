@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>进度条</title>
+</head>
+<style>
+    #bar-warp {
+        width: 500px;
+        height: 30px;
+        border: 1px solid gray;
+    }
+
+    #bar {
+        width: 0px;
+        height: 30px;
+        background: gray;
+    }
+</style>
+<body>
+<!--进度条-->
+<div id="bar-warp">
+    <div id="bar"><span id="precent"></span></div>
+
+</div>
+<br/>
+<input type="file" name="pic" onchange="clearBar()"/><br>
+<button onclick="upFile()">上传</button>
+</body>
+</html>
+<script type="text/javascript">
+    function clearBar() {
+        document.getElementById('bar').style.width = '0%';
+    }
+
+    function upFile() {
+        var pic = document.getElementsByTagName('input')[0].files[0];
+        var fd = new FormData();
+        var xhr = new XMLHttpRequest();
+        xhr.open('post', '/file/upload', true);
+
+        xhr.onreadystatechange = function () {
+            //readystate为4表示请求已完成并就绪
+            if (this.readyState == 4) {
+                document.getElementById('precent').innerHTML = this.responseText;
+                //在进度条下方插入百分比
+            }
+        }
+
+        xhr.upload.onprogress = function (ev) {
+            //如果ev.lengthComputable为true就可以开始计算上传进度
+            //上传进度 = 100* ev.loaded/ev.total
+            if (ev.lengthComputable) {
+                var precent = 100 * ev.loaded / ev.total;
+                console.log(precent);
+                //更改进度条，及百分比
+                document.getElementById('bar').style.width = precent + '%';
+                document.getElementById('precent').innerHTML = Math.floor(precent) + '%';
+            }
+        }
+        //第一个参数值需要与后台接收MultipartFile的参数名一致
+        fd.append('fileName', pic);
+
+        xhr.send(fd);
+
+    }
+</script>
